@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistem Monitoring BMN - Kanwil Ditjenpas Sulbar</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+/* Update Desain Form Laporan */
+.form-box {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  max-width: 600px;
+  margin: 30px auto;
+  box-shadow: 0 15px 35px rgba(10, 31, 68, 0.1);
+  border: 1px solid #eef2f6;
+}
+
+.form-group {
+  margin-bottom: 25px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--primary);
+  font-size: 14px;
+}
+
+.form-box input, .form-box select, .form-box textarea {
+  width: 100%;
+  padding: 15px;
+  border-radius: 12px;
+  border: 2px solid #f0f0f0;
+  background: #fcfcfc;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.form-box input:focus, .form-box select:focus, .form-box textarea:focus {
+  border-color: var(--gold);
+  background: white;
+  outline: none;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.1);
+}
+
+.btn-kirim {
+  width: 100%;
+  background: linear-gradient(45deg, var(--primary), var(--secondary));
+  color: white;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 8px 15px rgba(10, 31, 68, 0.2);
+}
+
+.btn-kirim:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 20px rgba(10, 31, 68, 0.3);
+  filter: brightness(1.1);
+}
+:root { --primary:#0a1f44; --secondary:#163d7a; --gold:#d4af37; --bg:#f4f7fb; }
+body { margin:0; font-family:Poppins; background:var(--bg); color: #333; }
+header { background: linear-gradient(90deg,var(--primary),var(--secondary)); padding:15px 40px; display:flex; justify-content:space-between; align-items:center; color:white; box-shadow:0 5px 20px rgba(0,0,0,0.2); position: sticky; top: 0; z-index: 1000; }
+.logo-area { display:flex; align-items:center; gap:10px; }
+.logo-area img { height:45px; }
+nav a { color:white; margin-left:20px; text-decoration:none; font-weight:500; cursor: pointer; transition: 0.3s; }
+nav a:hover { color:var(--gold); }
+.hero { background: linear-gradient(rgba(10,31,68,0.95),rgba(22,61,122,0.85)); text-align:center; color:white; padding:80px 20px; }
+.hero img { height:80px; margin:10px; animation: float 4s ease-in-out infinite; }
+.hero h1 { font-size:32px; margin-top:10px; }
+.page-content { display: none; animation: fadeIn 0.6s ease; }
+.page-content.active { display: block; }
+.container { padding:40px; max-width: 1200px; margin: auto; }
+.section-title { font-size:24px; border-left:5px solid var(--gold); padding-left:15px; margin-bottom:25px; color: var(--primary); font-weight: 600; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px; }
+.card { background:white; padding:25px; border-radius:15px; text-align:center; cursor:pointer; box-shadow:0 5px 15px rgba(0,0,0,0.05); transition:0.3s; border: 1px solid #eee; }
+.card:hover { transform:translateY(-5px); border-color: var(--gold); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+.table-container { background: white; padding: 20px; border-radius: 15px; overflow-x: auto; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+table { width:100%; border-collapse:collapse; margin-top:10px; }
+th, td { padding:12px; border:1px solid #eee; text-align:left; font-size: 14px; }
+th { background: var(--primary); color: white; }
+.baik { color:green; font-weight:bold; }
+.ringan { color:orange; font-weight:bold; }
+.berat { color:red; font-weight:bold; }
+.form-box { background: white; padding: 30px; border-radius: 15px; max-width: 600px; margin: auto; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+button { background:var(--primary); color:white; padding:12px 25px; border:none; border-radius:8px; cursor:pointer; font-weight: 600; }
+footer { background:var(--primary); color:white; text-align:center; padding:20px; margin-top:40px; }
+@keyframes fadeIn { from {opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
+@keyframes float { 0%, 100% {transform: translateY(0px);} 50% {transform: translateY(-10px);} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-area">
+    <img src="logo1.png">
+    <img src="logo2.png">
+    <div><strong>Sistem Monitoring BMN</strong><br><small>Kanwil Ditjenpas Sulbar</small></div>
+  </div>
+  <nav>
+    <a href="#beranda">Beranda</a>
+    <a href="#database">Database</a>
+    <a href="#laporan">Lapor Kerusakan</a>
+    <a href="#dashboard">Dashboard</a>
+  </nav>
+</header>
+
+<div id="beranda" class="page-content active">
+  <section class="hero">
+    <img src="logo1.png"><img src="logo2.png">
+    <h1>Sistem Monitoring Barang Milik Negara (BMN)</h1>
+    <p>KANWIL DITJENPAS SULAWESI BARAT</p>
+  </section>
+  <div class="container">
+    <div class="section-title">Informasi Sistem</div>
+    <p>Gunakan menu <b>Database</b> untuk melihat rincian per ruangan atau <b>Lapor Kerusakan</b> untuk pengaduan.</p>
+  </div>
+</div>
+
+<div id="database" class="page-content">
+  <div class="container">
+    <div class="section-title" id="dbTitle">Pilih Ruangan</div>
+    
+    <div id="ruanganView">
+      <div class="grid" id="gridRuangan"></div>
+    </div>
+
+    <div id="asetView" style="display:none;">
+      <button onclick="window.location.hash='database'" style="margin-bottom:20px; background:#666;">← Kembali ke Ruangan</button>
+      <h3 id="judulRuangan" style="color: var(--primary);"></h3>
+      <input type="text" id="search" onkeyup="filterAset()" placeholder="Cari nama barang...">
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr><th>Kode</th><th>Nama Barang</th><th>NUP</th><th>Merk</th><th>Kondisi</th><th>Keterangan</th></tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="laporan" class="page-content">
+  <div class="container">
+    <div class="section-title">Lapor Kerusakan</div>
+    <div class="form-box">
+      <input type="text" id="lapNama" placeholder="Nama Pelapor">
+      <select id="selectRuanganLaporan"></select>
+      <input type="text" id="lapBarang" placeholder="Nama Barang">
+      <textarea id="lapKendala" rows="4" placeholder="Detail Kendala"></textarea>
+      <button onclick="kirimLaporan()">Kirim Laporan</button>
+    </div>
+  </div>
+</div>
+
+<div id="dashboard" class="page-content">
+  <div class="container">
+    <div class="section-title">Dashboard Statistik</div>
+    <div class="grid">
+      <div class="card" style="cursor:default;"><canvas id="bmnChart"></canvas></div>
+      <div class="card" style="cursor:default;"><h3>Total Ruangan</h3><h1 id="statTotalRuangan">0</h1></div>
+    </div>
+  </div>
+</div>
+
+<footer>© 2026 Sistem Monitoring BMN | Kanwil Sulawesi Barat</footer>
+
+<script>
+const scriptURL = 'https://script.google.com/macros/s/AKfycby11kLl8ICLafJ59hz4KUualKkgvBK83XlSahfjilQDMpFpSk-yu-FdaO2RhH3-5GaiAg/exec';
+
+// DATA ASET
+// DATA CONTOH (Sesuai Struktur Anda)
+const dataAset = {
+ "Ruang Ka Kanwil": [
+  {
+    kode:"3050201002",
+    nama:"Meja Kerja Kayu",
+    nup:"2",
+    merk:"MEJA KAYU IMPORTA",
+    kondisi:"Baik",
+    keterangan:"Barang Milik Rupbasan"
+  },
+  {
+    kode:"3050201009",
+    nama:"Meja Komputer",
+    nup:"2",
+    merk:"Meja dan Kursi Komputer Informa",
+    kondisi:"Baik",
+    keterangan:"Barang Milik Rupbasan"
+  },
+  {
+    kode:"3050204004",
+    nama:"A.C. Split",
+    nup:"4",
+    merk:"DAIKIN",
+    kondisi:"Baik",
+    keterangan:"Barang Milik Rupbasan"
+  },
+  {
+    kode:"3100102001",
+    nama:"P.C Unit",
+    nup:"13",
+    merk:"Axioo MyPC One Pro K5 (8N5)",
+    kondisi:"Baik",
+    keterangan:"Barang Milik Rupbasan",
+  },
+{kode:"3050201002", nama:"Meja Kerja Kayu", nup:"91", merk:"INFORMA", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"5", merk:"62283-KSP-072055013", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"56", merk:"62283-KSP-072055013", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"100", merk:"62283-KSP-072055013", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"153", merk:"62283-KSP-072055013", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"219", merk:"62283-KSP-072055013", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"220", merk:"62283-KSP-072055013", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"282", merk:"Kursi Direktur Besar", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"286", merk:"62283-KSP-072055013", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"301", merk:"62283-KSP-072055013", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+
+{kode:"3050201008", nama:"Meja Rapat", nup:"8", merk:"-", kondisi:"Rusak Ringan", keterangan:"Barang Milik Kanwil Hukum"},
+
+{kode:"3050204004", nama:"A.C. Split", nup:"49", merk:"SAMSUNG", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+
+{kode:"3100102001", nama:"P.C Unit", nup:"12", merk:"ASUS 21", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"}
+],
+
+  "Ruang Kabagtum": [
+    {kode:"102.01", nama:"Laptop", nup:"003", merk:"Asus", kondisi:"Baik",keterangan:"Barang Milik Rupbasan"},
+    {kode:"102.02", nama:"Printer", nup:"004", merk:"Epson", kondisi:"Rusak Ringan",     keterangan:"Barang Milik Rupbasan"}
+  ],
+"Ruang Kabid PK": [
+  {kode:"3050204004", nama:"A.C. Split", nup:"47", merk:"MITZUBISHI", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"}
+],
+"Ruang Sekretaris": [
+  {kode:"3050201009", nama:"Meja Komputer", nup:"3", merk:"Meja dan Kursi Komputer Informa", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+  {kode:"3050204004", nama:"A.C. Split", nup:"5", merk:"DAIKIN", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+  {kode:"3050201002", nama:"Meja Kerja Kayu", nup:"46", merk:"EXPO MC 1260", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+
+  {kode:"3050201003", nama:"Kursi Besi/Metal", nup:"154", merk:"ERGOTEC KURSI ESELON III", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+  {kode:"3050201003", nama:"Kursi Besi/Metal", nup:"188", merk:"62283-KSP-072055013", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+  {kode:"3050201003", nama:"Kursi Besi/Metal", nup:"359", merk:"62283-KSP-072055013", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+
+  {kode:"3100102001", nama:"P.C Unit", nup:"4", merk:"HP ELITE ONE 800 G2 23-in Non-TOUCH ALL IN ONE PC", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+
+  {kode:"3100203003", nama:"Printer (Peralatan Personal Komputer)", nup:"33", merk:"EPSON", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"}
+],
+
+"Ruang SDM": [
+  {kode:"3050104001", nama:"Lemari Besi/Metal", nup:"1", merk:"BROTHER ALMARI B3 04", kondisi:"Baik",     keterangan:"Barang Milik Rupbasan"},
+  {kode:"3050104001", nama:"Lemari Besi/Metal", nup:"2", merk:"LEMARI BESI 3 STAR", kondisi:"Baik",     keterangan:"Barang Milik Rupbasan"},
+
+  {kode:"3050201009", nama:"Meja Komputer", nup:"1", merk:"Meja dan Kursi Komputer Informa", kondisi:"Baik",     keterangan:"Barang Milik Rupbasan"},
+  {kode:"3050201009", nama:"Meja Komputer", nup:"4", merk:"Meja dan Kursi Komputer Informa", kondisi:"Baik",     keterangan:"Barang Milik Rupbasan"},
+  {kode:"3050201009", nama:"Meja Komputer", nup:"5", merk:"Meja dan Kursi Komputer Informa", kondisi:"Baik",     keterangan:"Barang Milik Rupbasan"},
+
+  {kode:"3050204004", nama:"A.C. Split", nup:"2", merk:"POLYTRON AIR CONDITIONER 2,0PK", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+
+  {kode:"3060102128", nama:"Camera Digital", nup:"2", merk:"CANON EOS M100 MIRRORLESS", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+  {kode:"3060102165", nama:"Camera Conference", nup:"2", merk:"WEBCAM LOGITECH C930e", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+
+  {kode:"3100102001", nama:"P.C Unit", nup:"4", merk:"Asus Tipe PCD340MC-i38100023T", kondisi:"Rusak Berat", keterangan:"Barang Milik Rupbasan"},
+  {kode:"3100102001", nama:"P.C Unit", nup:"5", merk:"Asus Tipe PCD340MC-i38100023T", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+  {kode:"3100102001", nama:"P.C Unit", nup:"15", merk:"ACER VERITON Z4", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+
+  {kode:"3100203003", nama:"Printer (Peralatan Personal Komputer)", nup:"13", merk:"HP InkTank Wireless 415", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+  {kode:"3100203003", nama:"Printer (Peralatan Personal Komputer)", nup:"14", merk:"HP InkTank Wireless 415", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+
+  {kode:"3100204002", nama:"Router", nup:"1", merk:"Wireless-N Router TP-LINK TL-WR 841HP", kondisi:"Baik",     keterangan:"Barang Milik Rupbasan"},
+{kode:"3050201002", nama:"Meja Kerja Kayu", nup:"4", merk:"Solid Furniture", kondisi:"Rusak Ringan", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201002", nama:"Meja Kerja Kayu", nup:"110", merk:"EXPO MC 1260", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201002", nama:"Meja Kerja Kayu", nup:"26", merk:"EXPO MC 1260", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201002", nama:"Meja Kerja Kayu", nup:"115", merk:"EXPO MC 1260", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201002", nama:"Meja Kerja Kayu", nup:"35", merk:"EXPO MC 1260", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201002", nama:"Meja Kerja Kayu", nup:"40", merk:"EXPO MC 1260", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201002", nama:"Meja Kerja Kayu", nup:"113", merk:"EXPO MC 1260", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201002", nama:"Meja Kerja Kayu", nup:"67", merk:"EXPO MC 1260", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"45", merk:"-", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"54", merk:"62283-KSP-072055013", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"62", merk:"62283-KSP-072055013", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"82", merk:"62283-KSP-072055013", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"120", merk:"62283-KSP-072055013", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"245", merk:"62283-KSP-072055013", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"277", merk:"Executive Mesh", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"337", merk:"62283-KSP-072055013", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"358", merk:"Zuan", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+
+{kode:"3100102001", nama:"P.C Unit", nup:"3", merk:"Dell Optiplex 9010", kondisi:"Rusak Ringan", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3100102001", nama:"P.C Unit", nup:"8", merk:"DESKTOP PC DELL OPTIPLEX 3020 & OS Windows 7 Original", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3100102001", nama:"P.C Unit", nup:"23", merk:"ACER VERITON Z4 AIO - CORE I5", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3100102001", nama:"P.C Unit", nup:"27", merk:"HP ELITE ONE 800 G2 23-in Non-TOUCH ALL IN ONE PC", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3100102001", nama:"P.C Unit", nup:"31", merk:"HP PRO AIO i3", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3100102001", nama:"P.C Unit", nup:"32", merk:"LENNOVO C40-30", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3100102001", nama:"P.C Unit", nup:"56", merk:"HP PRO AIO i3", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+
+{kode:"3100102002", nama:"Lap Top", nup:"73", merk:"Laptop Lenovo IdeaPad S145-PID, Intel Core i5-8265", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+
+{kode:"3100203003", nama:"Printer (Peralatan Personal Komputer)", nup:"18", merk:"Epson Ecotank L15150", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"}
+],
+  "Ruang Server": [
+  {kode:"3050105048", nama:"LCD Projector/Infocus", nup:"1", merk:"Proyektor InFocus P109", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+
+  {
+  kode:"3050206017", nama:"Unit Power Supply", nup:"1", merk:"APC Tipe 800VA BV800I-GR", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"
+},
+{kode:"3050206017", nama:"Unit Power Supply", nup:"2", merk:"APC Tipe 800VA BV800I-GR", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050206017", nama:"Unit Power Supply", nup:"3", merk:"APC Tipe 800VA BV800I-GR", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050206017", nama:"Unit Power Supply", nup:"4", merk:"APC Tipe 800VA BV800I-GR", kondisi:"Rusak Berat", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050206017", nama:"Unit Power Supply", nup:"5", merk:"APC Tipe 800VA BV800I-GR", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050206017", nama:"Unit Power Supply", nup:"6", merk:"APC Tipe 800VA BV800I-GR", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050206017", nama:"Unit Power Supply", nup:"7", merk:"UPS Server 1500VA APC SMC1500I", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+
+{kode:"3050206019", nama:"Stabilisator", nup:"1", merk:"Stabilizer 1500VA Star SVC1,5 KVA", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+
+{kode:"3060201006", nama:"Handy Talky (HT)", nup:"3", merk:"HT Motorola Type XIR C2660", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3060201006", nama:"Handy Talky (HT)", nup:"5", merk:"HT Motorola Type XIR C2660", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+
+{kode:"3060208031", nama:"Alat Rx Radio UHF", nup:"1", merk:"RIG", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+
+{kode:"3100102001", nama:"P.C Unit", nup:"1", merk:"Asus Tipe PCD340MC-i38100023T", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3100102001", nama:"P.C Unit", nup:"7", merk:"Lenovo Think Centre", kondisi:"Rusak Berat", keterangan:"Barang Milik Rupbasan"},
+{kode:"3100102001", nama:"P.C Unit", nup:"8", merk:"ASUS D500TC-31105003T", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3100102001", nama:"P.C Unit", nup:"14", merk:"Axioo MyPC One Pro K5 (8N5)", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+
+{kode:"3100202010", nama:"Scanner (Peralatan Mini Komputer)", nup:"2", merk:"Scanner Barcode Wireless Postronik 2D SCANPRO", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+
+{kode:"3100203002", nama:"Monitor", nup:"1", merk:"Monitor Server Tower Asus LED VS207 DF", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+
+{kode:"3100203003", nama:"Printer (Peralatan Personal Komputer)", nup:"2", merk:"Printer All in One Canon G2010", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3100203003", nama:"Printer (Peralatan Personal Komputer)", nup:"6", merk:"HP PRINTER SMART TANK 500", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+
+{kode:"3100204001", nama:"Server", nup:"1", merk:"Server Tower Lenovo ThinkSystem ST550", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+
+{kode:"3100204024", nama:"Switch", nup:"1", merk:"Switch Hub TP-LINK Tipe TL-SG 1008PE", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050105048", nama:"LCD Projector/Infocus", nup:"5", merk:"EPSON", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+
+{kode:"3050204004", nama:"A.C. Split", nup:"55", merk:"Panasonic", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050204004", nama:"A.C. Split", nup:"59", merk:"MITZUBISHI", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050204004", nama:"A.C. Split", nup:"62", merk:"LG", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+
+{kode:"3100102001", nama:"P.C Unit", nup:"9", merk:"HP Omni 120", kondisi:"Rusak Ringan", keterangan:"Barang Milik Kanwil Hukum"}
+],
+
+"Ruang Pembinaan": [
+  {kode:"3050201002", nama:"Meja Kerja Kayu", nup:"3", merk:"Solid Furniture", kondisi:"Rusak Ringan", keterangan:"Barang Milik Rupbasan"},
+{kode:"3100204024", nama:"Switch", nup:"2", merk:"Switch Hub TP-LINK Tipe TL-SG 1008PE", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+  {kode:"3050104003", nama:"Rak Besi", nup:"8", merk:"Brother", kondisi:"Rusak Ringan"},
+  {kode:"3050104005", nama:"Filing Cabinet Besi", nup:"15", merk:"Yamanaka", kondisi:"Rusak Ringan"},
+  {kode:"3050104005", nama:"Filing Cabinet Besi", nup:"29", merk:"Yamanaka", kondisi:"Rusak Ringan"},
+
+  {kode:"3050201002", nama:"Meja Kerja Kayu", nup:"24", merk:"Solid Furniture", kondisi:"Rusak Ringan"},
+  {kode:"3050201002", nama:"Meja Kerja Kayu", nup:"77", merk:"-", kondisi:"Baik"},
+  {kode:"3050201002", nama:"Meja Kerja Kayu", nup:"86", merk:"EXPO MC 1260", kondisi:"Baik"},
+  {kode:"3050201002", nama:"Meja Kerja Kayu", nup:"93", merk:"EXPO MC 1260", kondisi:"Baik"},
+  {kode:"3050201002", nama:"Meja Kerja Kayu", nup:"49", merk:"EXPO MC 1260", kondisi:"Baik"},
+  {kode:"3050201002", nama:"Meja Kerja Kayu", nup:"25", merk:"EXPO MC 1260", kondisi:"Baik"},
+  {kode:"3050201002", nama:"Meja Kerja Kayu", nup:"120", merk:"EXPO MC 1260", kondisi:"Baik"},
+  {kode:"3050201002", nama:"Meja Kerja Kayu", nup:"27", merk:"EXPO MC 1260", kondisi:"Baik"},
+  {kode:"3050201002", nama:"Meja Kerja Kayu", nup:"16", merk:"EXPO MC 1260", kondisi:"Baik"},
+  {kode:"3050201002", nama:"Meja Kerja Kayu", nup:"59", merk:"EXPO MC 1260", kondisi:"Baik"},
+
+  {kode:"3050201003", nama:"Kursi Besi/Metal", nup:"43", merk:"FUTURA", kondisi:"Baik"},
+  {kode:"3050201003", nama:"Kursi Besi/Metal", nup:"61", merk:"62283-KSP-072055013", kondisi:"Baik"},
+  {kode:"3050201003", nama:"Kursi Besi/Metal", nup:"125", merk:"62283-KSP-072055013", kondisi:"Baik"},
+  {kode:"3050201003", nama:"Kursi Besi/Metal", nup:"131", merk:"Zuan", kondisi:"Baik"},
+  {kode:"3050201003", nama:"Kursi Besi/Metal", nup:"155", merk:"ERGOTEC KURSI ESELON IV", kondisi:"Baik"},
+  {kode:"3050201003", nama:"Kursi Besi/Metal", nup:"178", merk:"Futura", kondisi:"Baik"},
+  {kode:"3050201003", nama:"Kursi Besi/Metal", nup:"191", merk:"FUTURA", kondisi:"Baik"},
+  {kode:"3050201003", nama:"Kursi Besi/Metal", nup:"194", merk:"Zuan", kondisi:"Baik"},
+  {kode:"3050201003", nama:"Kursi Besi/Metal", nup:"203", merk:"ERGOTEC KURSI ESELON III", kondisi:"Baik"},
+  {kode:"3050201003", nama:"Kursi Besi/Metal", nup:"242", merk:"FUTURA", kondisi:"Baik"},
+  {kode:"3050201003", nama:"Kursi Besi/Metal", nup:"271", merk:"62283-KSP-072055013", kondisi:"Baik"},
+  {kode:"3050201003", nama:"Kursi Besi/Metal", nup:"287", merk:"FUTURA", kondisi:"Baik"},
+  {kode:"3050201003", nama:"Kursi Besi/Metal", nup:"299", merk:"FUTURA", kondisi:"Baik"},
+  {kode:"3050201003", nama:"Kursi Besi/Metal", nup:"321", merk:"62283-KSP-072055013", kondisi:"Baik"},
+  {kode:"3050201003", nama:"Kursi Besi/Metal", nup:"362", merk:"ERGOTEC KURSI ESELON III", kondisi:"Baik"},
+
+  {kode:"3050201008", nama:"Meja Rapat", nup:"5", merk:"Montana", kondisi:"Baik"},
+  {kode:"3050204004", nama:"A.C. Split", nup:"50", merk:"Panasonic", kondisi:"Baik"},
+
+  {kode:"3060201006", nama:"Handy Talky (HT)", nup:"3", merk:"HYTERA PoC PNC380", kondisi:"Baik"},
+  {kode:"3060201006", nama:"Handy Talky (HT)", nup:"4", merk:"HYTERA PoC PNC380", kondisi:"Baik"},
+  {kode:"3060201006", nama:"Handy Talky (HT)", nup:"5", merk:"HYTERA PoC PNC380", kondisi:"Baik"},
+  {kode:"3060201006", nama:"Handy Talky (HT)", nup:"6", merk:"HYTERA PoC PNC380", kondisi:"Baik"},
+  {kode:"3060201006", nama:"Handy Talky (HT)", nup:"7", merk:"HYTERA PoC PNC380", kondisi:"Baik"},
+  {kode:"3060201006", nama:"Handy Talky (HT)", nup:"8", merk:"HYTERA PoC PNC380", kondisi:"Baik"},
+
+  {kode:"3070101049", nama:"Clinical Thermometer", nup:"4", merk:"Polygreen", kondisi:"Baik"},
+
+  {kode:"3100102001", nama:"P.C Unit", nup:"19", merk:"ACER VERITON Z4 AIO - CORE I5", kondisi:"Baik"},
+  {kode:"3100102001", nama:"P.C Unit", nup:"24", merk:"AXIOO MYPC ONE PRO K5 (8N5)", kondisi:"Baik"},
+  {kode:"3100102001", nama:"P.C Unit", nup:"33", merk:"HP ELITE ONE 800 G2", kondisi:"Baik"},
+  {kode:"3100102001", nama:"P.C Unit", nup:"38", merk:"ACER VERITON Z4 AIO - CORE I5", kondisi:"Baik"},
+  {kode:"3100102001", nama:"P.C Unit", nup:"44", merk:"LENOVO C40-30", kondisi:"Baik"},
+  {kode:"3100102001", nama:"P.C Unit", nup:"49", merk:"HP PRO AIO i3", kondisi:"Baik"},
+  {kode:"3100102001", nama:"P.C Unit", nup:"64", merk:"HP ELITE ONE 800 G2", kondisi:"Baik"},
+  {kode:"3100102001", nama:"P.C Unit", nup:"66", merk:"HP PRO AIO i3", kondisi:"Baik"},
+
+  {kode:"3100102002", nama:"Lap Top", nup:"3", merk:"EVERCOSS NB1-I5001-02", kondisi:"Baik"},
+  {kode:"3100102002", nama:"Lap Top", nup:"21", merk:"EVERCOSS NB1-I5001-02", kondisi:"Baik"},
+  {kode:"3100102002", nama:"Lap Top", nup:"62", merk:"MSI GF-63", kondisi:"Baik"},
+
+  {kode:"3100203003", nama:"Printer", nup:"1", merk:"EPSON L365", kondisi:"Baik"},
+  {kode:"3100203003", nama:"Printer", nup:"34", merk:"EPSON L365", kondisi:"Baik"},
+  {kode:"3100203003", nama:"Printer", nup:"36", merk:"EPSON L365", kondisi:"Baik"},
+  {kode:"3100203003", nama:"Printer", nup:"41", merk:"HP LaserJet 5200N", kondisi:"Baik"}
+],
+
+"Gudang": [
+ {kode:"3020101003", nama:"Station Wagon", nup:"1", merk:"Toyota", kondisi:"Rusak Berat", keterangan:"Barang Milik Rupbasan"},
+
+{kode:"3050201002", nama:"Meja Kerja Kayu", nup:"1", merk:"Solid Furniture", kondisi:"Rusak Berat", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050201002", nama:"Meja Kerja Kayu", nup:"5", merk:"Solid Furniture", kondisi:"Rusak Ringan", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050201002", nama:"Meja Kerja Kayu", nup:"6", merk:"Solid Furniture", kondisi:"Rusak Ringan", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050201002", nama:"Meja Kerja Kayu", nup:"7", merk:"Solid Furniture", kondisi:"Rusak Ringan", keterangan:"Barang Milik Rupbasan"},
+
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"1", merk:"KURSI RAPAT", kondisi:"Rusak Berat", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"2", merk:"KURSI RAPAT", kondisi:"Rusak Berat", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"3", merk:"KURSI RAPAT", kondisi:"Rusak Berat", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"4", merk:"KURSI RAPAT", kondisi:"Rusak Berat", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"5", merk:"KURSI RAPAT", kondisi:"Rusak Berat", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"6", merk:"KURSI RAPAT", kondisi:"Rusak Berat", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"7", merk:"KURSI RAPAT", kondisi:"Rusak Berat", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"8", merk:"KURSI RAPAT", kondisi:"Rusak Berat", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"9", merk:"KURSI RAPAT", kondisi:"Rusak Berat", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"10", merk:"KURSI RAPAT", kondisi:"Rusak Berat", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"11", merk:"KURSI RAPAT", kondisi:"Rusak Berat", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"12", merk:"KURSI RAPAT", kondisi:"Rusak Berat", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"13", merk:"KURSI RAPAT", kondisi:"Rusak Berat", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"14", merk:"KURSI RAPAT", kondisi:"Rusak Berat", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"15", merk:"KURSI RAPAT", kondisi:"Rusak Berat", keterangan:"Barang Milik Rupbasan"},
+
+{kode:"3060201006", nama:"Handy Talky (HT)", nup:"6", merk:"Handy Talky HYTERA PoC PNC380", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+
+{kode:"3100204021", nama:"Kabel UTP", nup:"1", merk:"Kabel UTP Optronics Cat6", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"}
+],
+"Rupbasan": [
+  {kode:"3050104001", nama:"Lemari Besi/Metal", nup:"3", merk:"LEMARI BESI 3 STAR", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050104001", nama:"Lemari Besi/Metal", nup:"4", merk:"Brother", kondisi:"Rusak Ringan", keterangan:"Barang Milik Rupbasan"},
+
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"16", merk:"KURSI BESI IMPORTA", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+
+{kode:"3050206002", nama:"Televisi", nup:"2", merk:"POLYTRON 65 INCH SMART ANDROID TV PL", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+
+{kode:"3060102165", nama:"Camera Conference", nup:"1", merk:"WEBCAM LOGITECH C930e", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+
+{kode:"3100102001", nama:"P.C Unit", nup:"2", merk:"Asus Tipe PCD340MC-i38100023T", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3100102001", nama:"P.C Unit", nup:"3", merk:"Asus Tipe PCD340MC-i38100023T", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3100102001", nama:"P.C Unit", nup:"6", merk:"Asus Tipe PCD340MC-i38100023T", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3100102001", nama:"P.C Unit", nup:"9", merk:"ASUS D500TC-31105003T", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3100102001", nama:"P.C Unit", nup:"10", merk:"ASUS D500TC-31105003T", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3100102001", nama:"P.C Unit", nup:"11", merk:"Axioo MyPC One Pro K5 (8N5)", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3100102001", nama:"P.C Unit", nup:"12", merk:"Axioo MyPC One Pro K5 (8N5)", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3100102001", nama:"P.C Unit", nup:"16", merk:"ACER VERITON Z4", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+
+{kode:"3100202010", nama:"Scanner (Peralatan Mini Komputer)", nup:"1", merk:"Scanner Barcode Wireless Postronik 2D SCANPRO", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+
+{kode:"3100203003", nama:"Printer (Peralatan Personal Komputer)", nup:"1", merk:"Printer All in One Canon G2010", kondisi:"Rusak Berat", keterangan:"Barang Milik Rupbasan"},
+{kode:"3100203003", nama:"Printer (Peralatan Personal Komputer)", nup:"3", merk:"Printer Barcode TSC TTP-244 Pro", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3100203003", nama:"Printer (Peralatan Personal Komputer)", nup:"4", merk:"HP PRINTER SMART TANK 500", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3100203003", nama:"Printer (Peralatan Personal Komputer)", nup:"5", merk:"HP PRINTER SMART TANK 500", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3100203003", nama:"Printer (Peralatan Personal Komputer)", nup:"8", merk:"HP SMART TANK 670", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3100203003", nama:"Printer (Peralatan Personal Komputer)", nup:"9", merk:"HP SMART TANK 670", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3100203003", nama:"Printer (Peralatan Personal Komputer)", nup:"10", merk:"HP InkTank Wireless 415", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3100203003", nama:"Printer (Peralatan Personal Komputer)", nup:"11", merk:"HP InkTank Wireless 415", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3100203003", nama:"Printer (Peralatan Personal Komputer)", nup:"12", merk:"HP InkTank Wireless 415", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"}
+],
+"Ruang Tata Usaha dan Umum": [
+ {kode:"3050201002", nama:"Meja Kerja Kayu", nup:"4", merk:"Solid Furniture", kondisi:"Rusak Ringan", keterangan:"Barang Milik Rupbasan"},
+{kode:"3100203003", nama:"Printer (Peralatan Personal Komputer)", nup:"7", merk:"HP SMART TANK 670", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050104001", nama:"Lemari Besi/Metal", nup:"4", merk:"MEDIUM ALUMINIUM WITH GLASS", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050104001", nama:"Lemari Besi/Metal", nup:"14", merk:"Yamanaka", kondisi:"Rusak Ringan", keterangan:"Barang Milik Kanwil Hukum"},
+
+{kode:"3050104005", nama:"Filing Cabinet Besi", nup:"18", merk:"Yamanaka", kondisi:"Rusak Ringan", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050104005", nama:"Filing Cabinet Besi", nup:"30", merk:"Brother", kondisi:"Rusak Ringan", keterangan:"Barang Milik Kanwil Hukum"},
+
+{kode:"3050201002", nama:"Meja Kerja Kayu", nup:"30", merk:"-", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201002", nama:"Meja Kerja Kayu", nup:"85", merk:"EXPO MC 1260", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201002", nama:"Meja Kerja Kayu", nup:"74", merk:"EXPO MC 1260", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201002", nama:"Meja Kerja Kayu", nup:"13", merk:"EXPO MC 1260", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"59", merk:"-", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"85", merk:"62283-KSP-072055013", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"142", merk:"62283-KSP-072055013", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"212", merk:"62283-KSP-072055013", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+
+{kode:"3050204004", nama:"A.C. Split", nup:"61", merk:"Panasonic", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+
+{kode:"3100102001", nama:"P.C Unit", nup:"15", merk:"DESKTOP PC DELL OPTIPLEX 3020 & OS Windows 7 Original", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3100102001", nama:"P.C Unit", nup:"29", merk:"HP PRO AIO i3", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+{kode:"3100102001", nama:"P.C Unit", nup:"62", merk:"ACER VERITON Z4 AIO - CORE I5", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"},
+
+{kode:"3100203003", nama:"Printer (Peralatan Personal Komputer)", nup:"26", merk:"EPSON L365", kondisi:"Baik", keterangan:"Barang Milik Kanwil Hukum"}
+],
+"Rumah Ka Kanwil": [
+  {kode:"3050204004", nama:"A.C. Split", nup:"3", merk:"POLYTRON AIR CONDITIONER 2,0PK", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050206002", nama:"Televisi", nup:"1", merk:"SAMSUNG 65 INCH 4K UHD SMART TV", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"}
+],
+"Ruang Kabid Pembinaan": [
+ {kode:"3050204004", nama:"A.C. Split", nup:"6", merk:"DAIKIN", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3060102165", nama:"Camera Conference", nup:"3", merk:"WEBCAM LOGITECH C930e", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3100102001", nama:"P.C Unit", nup:"17", merk:"ACER VERITON Z4", kondisi:"Baik", keterangan:"Barang Milik Rupbasan"},
+{kode:"3050201005", nama:"Sice", nup:"6", merk:"Procella Krem", kondisi:"Baik"}
+],
+"Lainnya": [
+  {kode:"3020101001", nama:"Stationary Generating Set", nup:"1", merk:"KOBELL GENERATOR SET 30KVA", kondisi:"Baik"},
+  {kode:"3060208001", nama:"CCTV", nup:"1", merk:"HIKVISION", kondisi:"Baik"},
+  {kode:"3050204004", nama:"A.C. Split", nup:"1", merk:"POLYTRON AIR CONDITIONER 2,0PK", kondisi:"Baik"},
+  {kode:"3050205001", nama:"Sound System", nup:"1", merk:"ASHLEY SOUND SYSTEM", kondisi:"Baik"},
+  {kode:"3060102128", nama:"Camera Digital", nup:"1", merk:"Kamera SLR CANON EOS 3000D", kondisi:"Baik"},
+  {kode:"3100203003", nama:"Printer (Peralatan Personal Komputer)", nup:"15", merk:"HP InkTank Wireless 415", kondisi:"Baik"},
+  {kode:"3100203003", nama:"Printer (Peralatan Personal Komputer)", nup:"16", merk:"HP InkTank Wireless 415", kondisi:"Baik"},
+{kode:"3050201009", nama:"Meja Komputer", nup:"6", merk:"Meja dan Kursi Komputer Informa", kondisi:"Baik"},
+{kode:"3060201006", nama:"Handy Talky (HT)", nup:"4", merk:"HT Motorola Type XIR C2660", kondisi:"Baik"},
+{kode:"3060201006", nama:"Handy Talky (HT)", nup:"7", merk:"Handy Talky HYTERA PoC PNC380", kondisi:"Baik"},
+
+{kode:"3070101049", nama:"Clinical Thermometer (Alat Kedokteran Umum)", nup:"1", merk:"K3 PLUS ALAT PENGUKUR SUHU", kondisi:"Baik"},
+
+{kode:"3100203003", nama:"Printer (Peralatan Personal Komputer)", nup:"17", merk:"HP InkTank Wireless 415", kondisi:"Baik"},
+
+{kode:"3100203999", nama:"Peralatan Personal Komputer Lainnya", nup:"1", merk:"Network Toolkit dan Rg-45 cat,6 (50 buah)", kondisi:"Baik"},
+
+{kode:"3100204024", nama:"Switch", nup:"3", merk:"Switch Hub TP-LINK Tipe TL-SG 1008PE", kondisi:"Baik"},
+{kode:"3100204024", nama:"Switch", nup:"4", merk:"Switch Hub TP-LINK Tipe TL-SG 1008PE", kondisi:"Rusak Berat"}, 
+{kode:"4010101001", nama:"Bangunan Gedung Kantor Permanen", nup:"1", merk:"-", kondisi:"Baik"},
+
+{kode:"4010102004", nama:"Bangunan Gudang Terbuka Permanen", nup:"1", merk:"-", kondisi:"Baik"},
+{kode:"4010102004", nama:"Bangunan Gudang Terbuka Permanen", nup:"2", merk:"-", kondisi:"Baik"},
+{kode:"4010102004", nama:"Bangunan Gudang Terbuka Permanen", nup:"3", merk:"-", kondisi:"Baik"},
+{kode:"4010102004", nama:"Bangunan Gudang Terbuka Permanen", nup:"4", merk:"-", kondisi:"Baik"},
+{kode:"4010102004", nama:"Bangunan Gudang Terbuka Permanen", nup:"5", merk:"-", kondisi:"Baik"},
+
+{kode:"4010103001", nama:"Bangunan Bengkel/Hanggar Permanen", nup:"1", merk:"-", kondisi:"Baik"},
+
+{kode:"4010130999", nama:"Bangunan Lainnya", nup:"1", merk:"-", kondisi:"Baik"},
+{kode:"4010130999", nama:"Bangunan Lainnya", nup:"2", merk:"-", kondisi:"Baik"},
+
+{kode:"4010202004", nama:"Rumah Negara Golongan II Tipe B Permanen", nup:"1", merk:"-", kondisi:"Baik"},
+
+{kode:"4010202010", nama:"Rumah Negara Golongan II Tipe D Permanen", nup:"1", merk:"-", kondisi:"Baik"},
+{kode:"4010202010", nama:"Rumah Negara Golongan II Tipe D Permanen", nup:"2", merk:"-", kondisi:"Baik"},
+
+{kode:"4040104001", nama:"Pagar Permanen", nup:"1", merk:"-", kondisi:"Baik"},
+{kode:"3050204004", nama:"A.C. Split", nup:"69", merk:"MITZUBISHI", kondisi:"Baik", keterangan:"RuNas Kabagtum"},
+{kode:"3020101003", nama:"Station Wagon", nup:"3", merk:"Toyota", kondisi:"Rusak Berat"},
+{kode:"3050104001", nama:"Lemari Besi/Metal", nup:"20", merk:"Innola Type MCS", kondisi:"Baik"},
+{kode:"3050104002", nama:"Lemari Kayu", nup:"7", merk:"-", kondisi:"Baik"},
+
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"25", merk:"-", kondisi:"Baik"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"119", merk:"-", kondisi:"Baik"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"257", merk:"-", kondisi:"Baik"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"263", merk:"-", kondisi:"Baik"},
+{kode:"3050201003", nama:"Kursi Besi/Metal", nup:"355", merk:"62283-KSP-072055013", kondisi:"Baik"},
+
+{kode:"3050204001", nama:"Lemari Es", nup:"1", merk:"SHARP", kondisi:"Baik"},
+{kode:"3050204004", nama:"A.C. Split", nup:"36", merk:"Sharp", kondisi:"Rusak Ringan"},
+{kode:"3050204004", nama:"A.C. Split", nup:"60", merk:"-", kondisi:"Baik"},
+
+{kode:"3100203003", nama:"Printer (Peralatan Personal Komputer)", nup:"23", merk:"HP", kondisi:"Baik"},
+{kode:"3100203003", nama:"Printer (Peralatan Personal Komputer)", nup:"24", merk:"CANON IP 2770", kondisi:"Baik"},
+],
+"Tidak Diketahui": [
+  {kode:"3060201006", nama:"Handy Talky (HT)", nup:"1", merk:"HT merk Hytera/BD508", kondisi:"Baik"},
+  {kode:"3060201006", nama:"Handy Talky (HT)", nup:"2", merk:"HT merk Hytera/BD508", kondisi:"Baik"}
+],
+};
+
+
+// 1. ROUTING UTAMA
+function handleRouting() {
+  const hash = window.location.hash || '#beranda';
+  const pageId = hash.split('?')[0].replace('#', '');
+  
+  // Sembunyikan semua halaman, tampilkan yang aktif
+  document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+  const targetPage = document.getElementById(pageId);
+  if (targetPage) targetPage.classList.add('active');
+
+  // Logika Database (Folder vs Tabel)
+  if (pageId === 'database') {
+    if (hash.includes('?ruang=')) {
+      const namaRuang = decodeURIComponent(hash.split('?ruang=')[1]);
+      tampilkanTabel(namaRuang);
+    } else {
+      tampilkanGrid();
+    }
+  }
+  
+  if (pageId === 'dashboard') loadChart();
+}
+
+// 2. FUNGSI DATABASE
+function tampilkanGrid() {
+  document.getElementById('ruanganView').style.display = 'block';
+  document.getElementById('asetView').style.display = 'none';
+  document.getElementById('dbTitle').innerText = "Pilih Ruangan";
+}
+
+function tampilkanTabel(nama) {
+  document.getElementById('ruanganView').style.display = 'none';
+  document.getElementById('asetView').style.display = 'block';
+  document.getElementById('judulRuangan').innerText = "Detail Aset: " + nama;
+  renderTableData(dataAset[nama] || []);
+}
+
+function renderTableData(arr) {
+  const body = document.getElementById('tableBody');
+  body.innerHTML = arr.length ? "" : '<tr><td colspan="6" style="text-align:center;">Data kosong</td></tr>';
+  arr.forEach(item => {
+    const cls = item.kondisi.toLowerCase() === "baik" ? "baik" : (item.kondisi.includes("Ringan") ? "ringan" : "berat");
+    body.insertAdjacentHTML('beforeend', `<tr><td>${item.kode}</td><td>${item.nama}</td><td>${item.nup}</td><td>${item.merk}</td><td class="${cls}">${item.kondisi}</td><td>${item.keterangan}</td></tr>`);
+  });
+}
+
+// 3. INISIALISASI GRID & DROPDOWN
+function init() {
+  const grid = document.getElementById('gridRuangan');
+  const selectLaporan = document.getElementById('selectRuanganLaporan'); // Ambil elemen dropdown
+  const daftar = Object.keys(dataAset); // Mengambil daftar nama ruangan dari dataAset
+  
+  // 1. Kosongkan grid dan dropdown terlebih dahulu
+  grid.innerHTML = "";
+  selectLaporan.innerHTML = '<option value="" disabled selected>Pilih Lokasi Ruangan...</option>';
+  
+  // 2. Loop untuk membuat kartu ruangan dan pilihan dropdown
+  daftar.forEach(ruang => {
+    // Membuat kartu untuk menu Beranda/Database
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.onclick = () => window.location.hash = `database?ruang=${encodeURIComponent(ruang)}`;
+    card.innerHTML = `<i>📁</i><h3>${ruang}</h3><small>Klik untuk detail</small>`;
+    grid.appendChild(card);
+    
+    // Membuat pilihan (option) untuk form laporan
+    const opt = document.createElement('option');
+    opt.value = ruang; 
+    opt.textContent = ruang;
+    selectLaporan.appendChild(opt); // Memasukkan pilihan ke dalam dropdown
+  });
+
+  // Update statistik total ruangan di dashboard
+  const statTotal = document.getElementById('statTotalRuangan');
+  if(statTotal) statTotal.innerText = daftar.length;
+}
+// ... kode dataAset dan navigasi lainnya ...
+
+// CARI FUNGSI INI DAN TEMPELKAN KODE ANDA DI SINI
+function kirimLaporan() {
+  const btn = document.querySelector('button[onclick="kirimLaporan()"]');
+  
+  // Ambil data
+  const data = {
+    nama: document.getElementById('lapNama').value,
+    ruangan: document.getElementById('selectRuanganLaporan').value,
+    barang: document.getElementById('lapBarang').value,
+    kendala: document.getElementById('lapKendala').value
+  };
+
+  // Validasi
+  if (!data.nama || !data.ruangan || !data.barang || !data.kendala) {
+    alert("Harap lengkapi semua bidang laporan!");
+    return;
+  }
+
+  // Visual feedback
+  btn.innerText = "Mengirim...";
+  btn.disabled = true;
+
+  // Kirim ke Google Apps Script
+  fetch(scriptURL, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: JSON.stringify(data),
+    headers: { 'Content-Type': 'application/json' }
+  })
+  .then(() => {
+    alert('Laporan berhasil terkirim!');
+    // Reset Form
+    document.getElementById('lapNama').value = "";
+    document.getElementById('lapBarang').value = "";
+    document.getElementById('lapKendala').value = "";
+    document.getElementById('selectRuanganLaporan').selectedIndex = 0;
+  })
+  .catch(err => {
+    console.error(err);
+    alert('Error: ' + err.message);
+  })
+  .finally(() => {
+    btn.innerText = "Kirim Laporan"; // Balikkan tulisan tombol
+    btn.disabled = false;            // Aktifkan kembali tombol
+  });
+}
+// 4. LAINNYA
+function loadChart() {
+  const ctx = document.getElementById('bmnChart').getContext('2d');
+  let b=0, r=0, s=0;
+  Object.values(dataAset).flat().forEach(i => {
+    if(i.kondisi==="Baik") b++; else if(i.kondisi.includes("Ringan")) r++; else s++;
+  });
+  if(window.myChart) window.myChart.destroy();
+  window.myChart = new Chart(ctx, {
+    type: 'pie',
+    data: { labels: ['Baik', 'Ringan', 'Berat'], datasets: [{ data:[b,r,s], backgroundColor:['#27ae60','#f39c12','#e74c3c'] }] }
+  });
+}
+
+window.addEventListener('hashchange', handleRouting);
+window.onload = () => { init(); handleRouting(); };
+</script>
+</body>
+</html>
